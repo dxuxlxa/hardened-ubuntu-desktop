@@ -14,13 +14,13 @@ autoinstall:
       # Define the target disk using the largest available device.
       - ptable: gpt
         type: disk
-        id: nvme0n1
+        id: sda
         wipe: all
         match:
           size: largest
 
       # Create a dedicated /boot partition (unencrypted) of 512MiB.
-      - device: nvme0n1
+      - device: sda
         size: 512MiB
         type: partition
         id: boot_partition
@@ -29,7 +29,7 @@ autoinstall:
         mount: /boot
 
       # Allocate the remainder of the disk to LVM.
-      - device: nvme0n1
+      - device: sda
         type: partition
         id: lvm_partition
         # This partition will be used as the physical volume for LVM after encryption.
