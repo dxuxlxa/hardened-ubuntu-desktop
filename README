@@ -1,0 +1,79 @@
+# Ubuntu Desktop Automated Installation and Hardening Guide
+
+## Overview
+This repository contains an automated installation configuration (`autoinstall.yaml`) for Ubuntu Desktop that implements security hardening measures and proper disk partitioning. The configuration automates the installation process while implementing security best practices with a defense in depth approach.
+
+## Compliance and Standards
+This configuration aligns with ANSSI-BP-028 v2.0 at the enhanced hardening level. Originally designed for RHEL 9, these security measures have been adapted for Ubuntu Desktop while maintaining the same security principles.
+
+ANSSI (Agence nationale de la sécurité des systèmes d'information) is the French National Information Security Agency. Their ANSSI-BP-028 guidelines provide comprehensive security recommendations for GNU/Linux systems.
+
+For more details, visit: https://www.ssi.gouv.fr/administration/guide/recommandations-de-securite-relatives-a-un-systeme-gnulinux/
+
+## What Does autoinstall.yaml Do?
+The `autoinstall.yaml` file is an automated installation configuration that:
+1. Sets up a secure partitioning scheme using LVM over encrypted volumes
+2. Configures security services and hardening measures
+3. Implements recommended mount options for different partitions
+4. Automates the entire Ubuntu Desktop installation process
+
+## Security Features
+
+### 1. Partition Isolation and Security
+- Each critical directory is isolated in its own logical volume with specific allocations:
+  - /home (35% of available space)
+  - /tmp (5%, with security restrictions)
+  - / (root) (30%)
+  - /var (10%)
+  - /var/log (10%)
+  - /var/log/audit (5%)
+  - /var/tmp (5%)
+  - /boot (512MB, unencrypted)
+
+- Secure mount options implemented:
+  - nosuid: Prevents setuid bit execution
+  - nodev: Blocks device file interpretation
+  - noexec: Prevents binary execution (applied to /tmp, /var/log, /var/log/audit, and /var/tmp)
+
+### 2. Encryption and LVM Setup
+- Full disk encryption implemented using LUKS with AES-XTS cipher
+- LVM structure:
+  1. Physical Volume (PV) created from encrypted partition
+  2. Volume Group (VG) aggregates the PV
+  3. Logical Volumes (LV) carved out with specific size allocations
+- Benefits:
+  - Protected data even if hardware is compromised
+  - Flexible storage management
+  - Easy volume resizing without downtime
+
+### 3. Automated Security Services
+The installation automatically configures:
+- UFW (Uncomplicated Firewall) - enabled by default
+- Unattended-upgrades for automatic security updates
+- AIDE for file integrity monitoring
+- Secure sudo configurations with explicit removal of NOPASSWD settings
+
+## LVM Configuration Details
+
+### Structure
+1. Boot partition (512MB, unencrypted ext4)
+2. Encrypted LUKS container (remainder of disk)
+3. LVM Physical Volume within LUKS
+4. Volume Group containing all logical volumes
+5. Logical Volumes with specific size allocations
+
+### Security Benefits
+- Separate mount options per partition for enhanced security
+- Encrypted storage for sensitive data
+- Protected audit logs in dedicated partition
+- Temporary directories isolated with execution restrictions
+- System logs separated from root partition
+
+## Additional Security Measures
+The late-commands in the configuration:
+1. Update package repositories
+2. Install and enable security tools
+3. Configure automatic security updates
+4. Remove insecure sudo configurations
+
+For advanced configurations or customizations, modify the late-commands section in the autoinstall.yaml file.
