@@ -4,7 +4,7 @@ autoinstall:
   identity:
     hostname: ubuntu
     username: dula
-    password: "$6$8zaCMne6cC3FvTnH$RTwnXNdDRPB4XRvZeY/a1ONO1ejs9cA/5lZoYB.F.E/Ys9aUOjj9kxycwIlXMIT8gH5VJ8D6xENXtrMi/Nm38."
+    password: "$6$5IVHiePAeuiSTTsS$T48hGc7rNVYRjKX2dRvpQnamtUkeb.ejTEVho4Xss381f4hTxo.AvHuWvUmjl2kmtu0PRI5jvU1JZKV0boUgO1"
   packages:
     - ufw
     - unattended-upgrades
@@ -14,12 +14,12 @@ autoinstall:
       # Define the target disk using the largest available device.
       - ptable: gpt
         type: disk
-        id: disk0
+        id: nvme0n1
         match:
           size: largest
 
       # Create a dedicated /boot partition (unencrypted) of 512MiB.
-      - device: disk0
+      - device: nvme0n1
         size: 512MiB
         type: partition
         id: boot_partition
@@ -28,7 +28,7 @@ autoinstall:
         mount: /boot
 
       # Allocate the remainder of the disk to LVM.
-      - device: disk0
+      - device: nvme0n1
         type: partition
         id: lvm_partition
         # This partition will be used as the physical volume for LVM after encryption.
