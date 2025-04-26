@@ -15,6 +15,7 @@ autoinstall:
       - ptable: gpt
         type: disk
         id: nvme0n1
+        wipe: all
         match:
           size: largest
 
